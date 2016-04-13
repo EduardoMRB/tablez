@@ -1,20 +1,29 @@
-class Settings
-  attr_accessor :title
+class TableElements
+  attr_reader :title
 
-  def title_size
-    title.size
+  def title=(title)
+    @title = Title.new(title)
   end
 
-  def total_padding_width
-    1 * 2
-  end
+  class Title
+    attr_reader :title
 
-  def max_width
-    [title_size].max + total_padding_width
+    def initialize(title)
+      @title = title
+    end
+
+    def total_padding_width
+      1 * 2
+    end
+
+    def width
+      title.size + total_padding_width
+    end
+
   end
 end
 
-module Display
+module DrawingPieces
   def padding
     " " * 1
   end
@@ -33,21 +42,25 @@ module Display
 end
 
 class Tablez
-  include Display
+  include DrawingPieces
 
   attr_reader :settings
 
   def initialize(&block)
-    @settings = Settings.new
-    yield(@settings)
+    @table_elements = TableElements.new
+    yield(@table_elements)
   end
 
   def title
-    @settings.title
+    @table_elements.title.title
+  end
+
+  def calculate_max_width
+    [@table_elements.title.width].max
   end
 
   def width
-    @settings.max_width
+    @width ||= calculate_max_width
   end
 
   def separator
@@ -59,12 +72,19 @@ class Tablez
   end
   alias_method :table_bottom, :separator_minus_line_break
 
+  def left_row_side
+    side_pipe + padding
+  end
+
+  def right_row_side
+    padding + side_pipe + line_break
+  end
+
   def render_title
-    side_pipe + padding + title + padding + side_pipe + line_break
+    left_row_side + title + right_row_side
   end
 
   def render
     separator + render_title + table_bottom
   end
-
 end
