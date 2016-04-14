@@ -1,3 +1,7 @@
+require "tablez/table"
+require "tablez/row"
+require "tablez/cell"
+
 # class TableElements
 #   attr_reader :title, :headers
 
@@ -64,75 +68,7 @@
 #   end
 # end
 
-module Tablez
-  class Table
-    attr_reader :rows
 
-    def number_of_columns
-      rows.map { |r| r.size }.max
-    end
-
-    def column(i)
-      rows.map { |r| r[i] }
-    end
-
-    def column_width(i)
-      columns[i].map(&:to_s).max.size
-    end
-
-    def columns
-      [].tap do |columns|
-        i = 0
-        while i <= rows.size
-          columns << rows.map { |r| r[i] }
-          i += 1
-        end
-      end
-    end
-
-    def rows
-      @row_objects.map { |ro| ro.row }
-    end
-
-    def add_rows(rows)
-      @row_objects = Array(rows).map { |r| Row.new(r) }
-    end
-    alias_method :<<, :add_rows
-
-    def number_of_rows
-      @row_objects.size
-    end
-
-    def row(i)
-      rows[i]
-    end
-  end
-
-  class Row
-    attr_reader :row
-
-    def initialize(row)
-      @row = row
-    end
-
-    def cells
-      row.each { |r| Cell.new(r) }
-    end
-
-    def values
-      cells.map { |c| c.value }
-    end
-  end
-
-  class Cell
-    attr_reader :value
-
-    def initialize(value)
-      @value = value
-    end
-
-  end
-end
 
     # def calculate_max_width
     #   @rows.join(" | ").size + 2
