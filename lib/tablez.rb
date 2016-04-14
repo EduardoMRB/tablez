@@ -90,17 +90,45 @@ module Tablez
       end
     end
 
+    def rows
+      @row_objects.map { |ro| ro.row }
+    end
+
     def add_rows(rows)
-      @rows = rows
+      @row_objects = Array(rows).map { |r| Row.new(r) }
     end
     alias_method :<<, :add_rows
 
     def number_of_rows
-      rows.size
+      @row_objects.size
     end
 
     def row(i)
       rows[i]
+    end
+  end
+
+  class Row
+    attr_reader :row
+
+    def initialize(row)
+      @row = row
+    end
+
+    def cells
+      row.each { |r| Cell.new(r) }
+    end
+
+    def values
+      cells.map { |c| c.value }
+    end
+  end
+
+  class Cell
+    attr_reader :value
+
+    def initialize(value)
+      @value = value
     end
 
   end
