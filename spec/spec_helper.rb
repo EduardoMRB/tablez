@@ -1,9 +1,9 @@
 require 'tablez'
 
-module HereDocFormatting
+module HeredocFormatting
   def deindent
     strip.gsub(/(^\s*)/, "")
   end
 end
 
-String.send(:include, HereDocFormatting)
+String.send(:include, HeredocFormatting)
