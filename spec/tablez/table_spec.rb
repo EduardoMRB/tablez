@@ -1,15 +1,80 @@
 require "spec_helper"
 
-RSpec.describe Tablez do
-  describe "Tablez.new" do
-    it "can take a nested row argument" do
-      table = Tablez.new(rows: [[1, 2, 3, 4, 5]])
-      expect(table.render).to eq <<-EOS.deindent
-      +-------------------+
-      | 1 | 2 | 3 | 4 | 5 |
-      +-------------------+
-      EOS
+RSpec.describe Tablez::Table do
+  describe "columns" do
+    it "can select columns" do
+      table = Tablez::Table.new
+      table << [[3, 5], [1, 2, 3]]
+      expect(table.column(0)).to eq([3, 1])
+      expect(table.column(2)).to eq([nil, 3])
     end
+
+    it "can count columns" do
+      table = Tablez::Table.new
+      table << [[3, 5], [1, 2, 3]]
+      expect(table.number_of_columns).to eq(3)
+    end
+
+    it "can return all columns" do
+      table = Tablez::Table.new
+      table << [[3, 5], [1, 2, 3]]
+      expect(table.columns).to eq([[3, 1], [5, 2], [nil, 3]])
+    end
+
+    it "can find column width" do
+      table = Tablez::Table.new
+      table << [["what", "foo bar"], ["foo", "foo bar baz qux", "lolol"]]
+      expect(table.column_width(0)).to eq(4)
+      expect(table.column_width(1)).to eq(15)
+      expect(table.column_width(2)).to eq(5)
+    end
+  end
+
+  describe "rows" do
+    it "can select rows" do
+      table = Tablez::Table.new
+      table << [[3, 5], [1, 2, 3]]
+      expect(table.row(0)).to eq([3, 5])
+    end
+
+    it "can count rows" do
+      table = Tablez::Table.new
+      table << [[3, 5], [1, 2, 3]]
+      expect(table.number_of_rows).to eq(2)
+    end
+
+    it "can return all rows" do
+      table = Tablez::Table.new
+      table << [[3, 5], [1, 2, 3]]
+      expect(table.rows).to eq([[3, 5], [1, 2, 3]])
+    end
+  end
+
+
+
+
+
+
+
+
+
+    # it "can render one row of single digits" do
+    #   table = Tablez::Table.new(rows: [[1, 2, 3, 4, 5]])
+    #   expect(table.render).to eq <<-EOS.deindent
+    #   +---+---+---+---+---+
+    #   | 1 | 2 | 3 | 4 | 5 |
+    #   +---+---+---+---+---+
+    #   EOS
+    # end
+
+    # it "can render one row of different size digits" do
+    #   table = Tablez.new(rows: [[9, 101, 5, 12, 3]])
+    #   expect(table.render).to eq <<-EOS.deindent
+    #   +---+-----+---+----+---+
+    #   | 9 | 101 | 5 | 12 | 3 |
+    #   +---+-----+---+----+---+
+    #   EOS
+    # end
 
     # it "can adjust to keep the correct padding" do
     #   table = Tablez.new(rows: [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]])
@@ -117,6 +182,4 @@ RSpec.describe Tablez do
     #   +---+-----+
     #   EOS
     # end
-
-  end
 end
