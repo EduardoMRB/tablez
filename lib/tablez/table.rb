@@ -1,6 +1,7 @@
 module Tablez
   class Table
     attr_reader :rows
+    attr_reader :row_objects
 
     def column(i)
       rows.map { |r| r[i] }
@@ -34,11 +35,29 @@ module Tablez
     end
 
     def rows
-      @row_objects.map { |ro| ro.row }
+      row_objects.map { |ro| ro.row }
     end
 
     def number_of_rows
       @row_objects.size
+    end
+
+    def separator
+      Separator.new(self).render
+    end
+
+    def table_bottom
+      Separator.new(self).bottom
+    end
+
+    def render
+      separator +
+      "".tap do |content|
+        row_objects.each do |row|
+          content << row.render
+        end
+      end +
+      table_bottom
     end
   end
 end

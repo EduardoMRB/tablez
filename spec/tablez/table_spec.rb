@@ -6,10 +6,17 @@ RSpec.describe Tablez::Table do
       table = Tablez::Table.new
       table << [[3, 5], [1, 2, 3]]
       expect(table.column(0)).to eq([3, 1])
+      expect(table.column(1)).to eq([5, 2])
       expect(table.column(2)).to eq([nil, 3])
     end
 
     it "can count columns" do
+      table = Tablez::Table.new
+      table << [[1, 2], [3, 4]]
+      expect(table.number_of_columns).to eq(2)
+    end
+
+    it "can count columns from different size rows" do
       table = Tablez::Table.new
       table << [[3, 5], [1, 2, 3]]
       expect(table.number_of_columns).to eq(3)
@@ -24,6 +31,7 @@ RSpec.describe Tablez::Table do
     it "can find column width" do
       table = Tablez::Table.new
       table << [["what", "foo bar"], ["foo", "foo bar baz qux", "lolol"]]
+      expect(table.columns).to eq([["what", "foo"], ["foo bar", "foo bar baz qux"], [nil, "lolol"]])
       expect(table.column_width(0)).to eq(4)
       expect(table.column_width(1)).to eq(15)
       expect(table.column_width(2)).to eq(5)
@@ -50,13 +58,38 @@ RSpec.describe Tablez::Table do
     end
   end
 
+  describe "#separator" do
+    it "renders the correct separator for a 2x2 table with padding of 1" do
+      table = Tablez::Table.new
+      table << [[1, 2], [3, 4]]
+      expect(table.separator).to eq("+---+---+\n")
+    end
 
+    it "renders the correct separator for a 3x2 table with padding of 1" do
+      table = Tablez::Table.new
+      table << [[1, 2, 3], [4, 5, 6]]
+      expect(table.separator).to eq("+---+---+---+\n")
+    end
+  end
 
+  describe "#render" do
+    it "can render a single element row" do
+      table = Tablez::Table.new
+      table << [[1]]
+      expect(table.render).to eq <<-EOS.deindent
+        +---+
+        | 1 |
+        +---+
+      EOS
+    end
+  end
 
-
-
-
-
+  describe "#render" do
+    it "can render a single element row" do
+      row = Tablez::Row.new([1, 2, 3])
+      expect(row.render).to eq("| 1 | 2 | 3 |\n")
+    end
+  end
 
     # it "can render one row of single digits" do
     #   table = Tablez::Table.new(rows: [[1, 2, 3, 4, 5]])
