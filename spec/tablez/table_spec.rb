@@ -10,7 +10,19 @@ RSpec.describe Tablez::Table do
       expect(table.column(2)).to eq([nil, 3])
     end
 
-    it "can count columns" do
+    it "can count columns with 1 row" do
+      table = Tablez::Table.new
+      table << [[1, 2, 3, 4, 5]]
+      expect(table.number_of_columns).to eq(5)
+    end
+
+    it "can return columns from 1 row" do
+      table = Tablez::Table.new
+      table << [[1, 2, 3, 4, 5]]
+      expect(table.columns).to eq([[1], [2], [3], [4], [5]])
+    end
+
+    it "can count columns with 2 rows" do
       table = Tablez::Table.new
       table << [[1, 2], [3, 4]]
       expect(table.number_of_columns).to eq(2)
@@ -22,7 +34,7 @@ RSpec.describe Tablez::Table do
       expect(table.number_of_columns).to eq(3)
     end
 
-    it "can return all columns" do
+    it "can return columns from 2 jagged rows" do
       table = Tablez::Table.new
       table << [[3, 5], [1, 2, 3]]
       expect(table.columns).to eq([[3, 1], [5, 2], [nil, 3]])
@@ -80,6 +92,16 @@ RSpec.describe Tablez::Table do
         +---+
         | 1 |
         +---+
+      EOS
+    end
+
+    it "can render a single row" do
+      table = Tablez::Table.new
+      table << [[1, 2, 3, 4, 5]]
+      expect(table.render).to eq <<-EOS.deindent
+      +---+---+---+---+---+
+      | 1 | 2 | 3 | 4 | 5 |
+      +---+---+---+---+---+
       EOS
     end
   end

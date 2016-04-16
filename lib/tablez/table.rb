@@ -14,7 +14,7 @@ module Tablez
     def columns
       [].tap do |columns|
         i = 0
-        while i <= rows.size
+        while i < rows.map(&:size).max
           columns << rows.map { |r| r[i] }
           i += 1
         end
@@ -56,8 +56,7 @@ module Tablez
         row_objects.each do |row|
           content << row.render
         end
-      end +
-      table_bottom
+      end + table_bottom
     end
   end
 end
