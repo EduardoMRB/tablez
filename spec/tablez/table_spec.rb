@@ -54,7 +54,17 @@ RSpec.describe Tablez::Table do
     it "can select rows" do
       table = Tablez::Table.new
       table << [[3, 5], [1, 2, 3]]
-      expect(table.row(0)).to eq([3, 5])
+      expect(table.row(0)).to eq([3, 5, nil])
+      expect(table.row(1)).to eq([1, 2, 3])
+    end
+
+    it "can find the max row" do
+      table = Tablez::Table.new
+      table << [[3, 5], [1, 2, 3]]
+      expect(table.max_row).to eq(3)
+
+      table << [[4, 4, 4, 4]]
+      expect(table.max_row).to eq(4)
     end
 
     it "can count rows" do
@@ -86,6 +96,11 @@ RSpec.describe Tablez::Table do
 
   describe "#render" do
     it "can render a single element row" do
+      row = Tablez::Row.new([1, 2, 3])
+      expect(row.render).to eq("| 1 | 2 | 3 |\n")
+    end
+
+    it "can render a single element row" do
       table = Tablez::Table.new
       table << [[1]]
       expect(table.render).to eq <<-EOS.deindent
@@ -104,137 +119,49 @@ RSpec.describe Tablez::Table do
       +---+---+---+---+---+
       EOS
     end
-  end
 
-  describe "#render" do
-    it "can render a single element row" do
-      row = Tablez::Row.new([1, 2, 3])
-      expect(row.render).to eq("| 1 | 2 | 3 |\n")
+    it "will interpret an unnested array as one row" do
+      table = Tablez::Table.new
+      table <<[1, 2, 3, 4, 5]
+      expect(table.render).to eq <<-EOS.deindent
+      +-------------------+
+      | 1 | 2 | 3 | 4 | 5 |
+      +-------------------+
+      EOS
+    end
+
+    it "can render one row of different size digits" do
+      table = Tablez::Table.new
+      table << [[9, 101, 5, 12, 3]]
+      expect(table.render).to eq <<-EOS.deindent
+      +---+-----+---+----+---+
+      | 9 | 101 | 5 | 12 | 3 |
+      +---+-----+---+----+---+
+      EOS
+    end
+
+    it "can adjust to keep the correct padding" do
+      table = Tablez::Table.new
+      table << [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
+      expect(table.render).to eq <<-EOS.deindent
+      +--------------------+
+      | 1 | 2 | 3 | 4 | 5  |
+      +--------------------+
+      | 6 | 7 | 8 | 9 | 10 |
+      +--------------------+
+      EOS
+    end
+
+    it "can render jagged arrays" do
+      table = Tablez::Table.new
+      table << [[1, 2, 3, 4, 5], [1, 2]]
+      expect(table.render).to eq <<-EOS.deindent
+      +---+---+---+---+---+
+      | 1 | 2 | 3 | 4 | 5 |
+      +---+---+---+---+---+
+      | 1 | 2 |   |   |   |
+      +---+---+---+---+---+
+      EOS
     end
   end
-
-    # it "can render one row of single digits" do
-    #   table = Tablez::Table.new(rows: [[1, 2, 3, 4, 5]])
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +---+---+---+---+---+
-    #   | 1 | 2 | 3 | 4 | 5 |
-    #   +---+---+---+---+---+
-    #   EOS
-    # end
-
-    # it "can render one row of different size digits" do
-    #   table = Tablez.new(rows: [[9, 101, 5, 12, 3]])
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +---+-----+---+----+---+
-    #   | 9 | 101 | 5 | 12 | 3 |
-    #   +---+-----+---+----+---+
-    #   EOS
-    # end
-
-    # it "can adjust to keep the correct padding" do
-    #   table = Tablez.new(rows: [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]])
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +--------------------+
-    #   | 1 | 2 | 3 | 4 | 5  |
-    #   +--------------------+
-    #   | 6 | 7 | 8 | 9 | 10 |
-    #   +--------------------+
-    #   EOS
-    # end
-
-    # it "will interpret a single array as one row" do
-    #   table = Tablez.new(rows: [1, 2, 3, 4, 5])
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +-------------------+
-    #   | 1 | 2 | 3 | 4 | 5 |
-    #   +-------------------+
-    #   EOS
-    # end
-
-
-    # it "can handle jagged arrays" do
-    #   table = Tablez.new(rows: [[1, 2, 3, 4, 5], [1, 2]])
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +-------------------+
-    #   | 1 | 2 | 3 | 4 | 5 |
-    #   +-------------------+
-    #   | 1 | 2 |           |
-    #   +-------------------+
-    #   EOS
-    # end
-
-    # it "can set a title" do
-    #   table = Tablez.new do |t|
-    #             t.title = "This is a title"
-    #           end
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +-----------------+
-    #   | This is a title |
-    #   +-----------------+
-    #   EOS
-    # end
-
-    # it "can set a title and one header" do
-    #   table = Tablez.new do |t|
-    #             t.title   = "This is a title"
-    #             t.headers = "Header 1"
-    #           end
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +-----------------+
-    #   | This is a title |
-    #   +-----------------+
-    #   |    Header 1     |
-    #   +-----------------+
-    #   EOS
-    # end
-
-    # it "can set a title and a 2 column header" do
-    #   table = Tablez.new do |t|
-    #             t.title   = "This is a title"
-    #             t.headers = ["Header 1", "Header 2"]
-    #           end
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +---------------------+
-    #   |   This is a title   |
-    #   +---------------------+
-    #   | Header 1 | Header 2 |
-    #   +---------------------+
-    #   EOS
-    # end
-
-    # it "can set a title and empty rows" do
-    #   table = Tablez.new do |t|
-    #             t.title = "This is a title"
-    #             t.rows  = 2
-    #           end
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +-----------------+
-    #   | Here is a title |
-    #   +-----------------+
-    #   |                 |
-    #   +-----------------+
-    #   |                 |
-    #   +-----------------+
-    #   EOS
-    # end
-
-    # it "can add a row" do
-    #   table << [1, 'One']
-    #   expect(table.render).to eq <<-EOS.deindent
-    #   +---+-----+
-    #   | 1 | One |
-    #   +---+-----+
-    #   EOS
-    # end
-
-    # it "can add two rows at once" do
-    #   table << [[1, 'One'], [2, 'Two']]
-    #   expect(table.to_s).to eq <<-EOS.deindent
-    #   +---+-----+
-    #   | 1 | One |
-    #   +---+-----+
-    #   | 2 | Two |
-    #   +---+-----+
-    #   EOS
-    # end
 end
