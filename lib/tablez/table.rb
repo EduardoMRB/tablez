@@ -14,7 +14,7 @@ module Tablez
     def columns
       [].tap do |columns|
         i = 0
-        while i < rows.map(&:size).max
+        while i < max_row
           columns << rows.map { |r| r[i] }
           i += 1
         end
