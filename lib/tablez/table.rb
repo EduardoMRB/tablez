@@ -8,7 +8,7 @@ module Tablez
     end
 
     def column_width(i)
-      columns[i].map(&:to_s).max.size
+      columns[i].map(&:to_s).max { |a, b| a.size <=> b.size }.size
     end
 
     def columns

@@ -40,13 +40,22 @@ RSpec.describe Tablez::Table do
       expect(table.columns).to eq([[3, 1], [5, 2], [nil, 3]])
     end
 
-    it "can find column width" do
+    it "can find column width with strings" do
       table = Tablez::Table.new
       table << [["what", "foo bar"], ["foo", "foo bar baz qux", "lolol"]]
       expect(table.columns).to eq([["what", "foo"], ["foo bar", "foo bar baz qux"], [nil, "lolol"]])
       expect(table.column_width(0)).to eq(4)
       expect(table.column_width(1)).to eq(15)
       expect(table.column_width(2)).to eq(5)
+    end
+
+    it "can find column width with integers" do
+      table = Tablez::Table.new
+      table << [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
+      expect(table.columns).to eq([[1, 6], [2, 7], [3, 8], [4, 9], [5, 10]])
+      expect(table.column_width(0)).to eq(1)
+      expect(table.column_width(1)).to eq(1)
+      expect(table.column_width(4)).to eq(2)
     end
   end
 
@@ -110,6 +119,16 @@ RSpec.describe Tablez::Table do
       EOS
     end
 
+    it "can render a single element row with string" do
+      table = Tablez::Table.new
+      table << [['foo']]
+      expect(table.render).to eq <<-EOS.deindent
+        +-----+
+        | foo |
+        +-----+
+      EOS
+    end
+
     it "can render a single row" do
       table = Tablez::Table.new
       table << [[1, 2, 3, 4, 5]]
@@ -142,13 +161,13 @@ RSpec.describe Tablez::Table do
 
     it "can adjust to keep the correct padding" do
       table = Tablez::Table.new
-      table << [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
+      table << [[1, 2, 3, 4, 5], [66, 7, 8, 9, 10]]
       expect(table.render).to eq <<-EOS.deindent
-      +--------------------+
-      | 1 | 2 | 3 | 4 | 5  |
-      +--------------------+
-      | 6 | 7 | 8 | 9 | 10 |
-      +--------------------+
+      +----+---+---+---+----+
+      | 1  | 2 | 3 | 4 | 5  |
+      +----+---+---+---+----+
+      | 66 | 7 | 8 | 9 | 10 |
+      +---------------------+
       EOS
     end
 

@@ -15,11 +15,11 @@ module Tablez
     end
 
     def left_side
-      "| "
+      "|" + " " * cells.first.width
     end
 
     def right_side
-      " |\n"
+      " " * cells.last.width + "|\n"
     end
 
     def values_with_blanks
@@ -27,6 +27,7 @@ module Tablez
     end
 
     def render
+      require 'pry'; binding.pry;
       left_side + values_with_blanks.join(" | ") + right_side
     end
   end
