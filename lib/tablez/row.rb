@@ -1,6 +1,6 @@
 module Tablez
   class Row
-    attr_reader :row
+    attr_accessor :row
 
     def initialize(row)
       @row = row
@@ -22,8 +22,12 @@ module Tablez
       " |\n"
     end
 
+    def values_with_blanks
+      values.map { |v| v.nil? ? " " : v }
+    end
+
     def render
-      left_side + values.join(" | ") + right_side
+      left_side + values_with_blanks.join(" | ") + right_side
     end
   end
 end

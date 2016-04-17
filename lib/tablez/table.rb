@@ -27,8 +27,19 @@ module Tablez
 
     def add_rows(rows)
       @row_objects = Array(rows).map { |r| Row.new(r) }
+      add_nil_values
     end
     alias_method :<<, :add_rows
+
+    def add_nil_values
+      row_objects.each do |ro|
+        (max_row - ro.row.size).times { ro.row << nil }
+      end
+    end
+
+    def max_row
+      rows.map(&:size).max
+    end
 
     def row(i)
       rows[i]
@@ -52,11 +63,13 @@ module Tablez
 
     def render
       separator +
-      "".tap do |content|
-        row_objects.each do |row|
-          content << row.render
+      "".tap do |table|
+        row_objects.each_with_index do |row, i|
+          table << row.render
+          table << separator unless i == row_objects.size - 1
         end
-      end + table_bottom
+      end +
+      table_bottom
     end
   end
 end

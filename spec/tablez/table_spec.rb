@@ -66,7 +66,7 @@ RSpec.describe Tablez::Table do
     it "can return all rows" do
       table = Tablez::Table.new
       table << [[3, 5], [1, 2, 3]]
-      expect(table.rows).to eq([[3, 5], [1, 2, 3]])
+      expect(table.rows).to eq([[3, 5, nil], [1, 2, 3]])
     end
   end
 
