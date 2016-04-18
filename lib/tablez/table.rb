@@ -1,4 +1,5 @@
 module Tablez
+  ::Array.send(:include, CoreExt::Array::PadEndWithNil)
   class Table
     attr_reader :rows
     attr_reader :row_objects

@@ -1,3 +1,4 @@
+require "tablez/core_ext/array/pad_end_with_nil"
 require "tablez/table"
 require "tablez/row"
 require "tablez/cell"
