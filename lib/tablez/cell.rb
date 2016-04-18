@@ -11,5 +11,9 @@ module Tablez
       (@value.to_s + @padding * 2).size
     end
 
+    def render
+
+    end
+
   end
 end

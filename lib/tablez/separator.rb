@@ -26,10 +26,8 @@ module Tablez
     end
 
     def render
-      padding = 1
-      total_padding = padding * 2
-      (table.number_of_columns).times do |i|
-        x_bars << "-" * (table.column_width(i) + total_padding)
+      table.columns.each do |column|
+        x_bars << "-" * (column.width_plus_padding)
       end
       left_corner + x_bars.join("+") + right_corner
     end

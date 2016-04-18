@@ -1,57 +1,45 @@
 module Tablez
   ::Array.send(:include, CoreExt::Array::PadEndWithNil)
   class Table
-    attr_reader :rows
-    attr_reader :row_objects
+    attr_accessor :rows
 
-    def column(i)
-      rows.map { |r| r[i] }
+    def initialize
+      @rows    = []
+      @columns = []
     end
 
-    def column_width(i)
-      columns[i].map(&:to_s).max { |a, b| a.size <=> b.size }.size
-    end
-
-    def columns
-      [].tap do |columns|
-        i = 0
-        while i < max_row
-          columns << rows.map { |r| r[i] }
-          i += 1
-        end
-      end
+    def max_row(raw_rows)
+      raw_rows.map(&:size).max
     end
 
     def number_of_columns
-      rows.map { |r| r.size }.max
+      rows.first.values.size
     end
 
-    def add_rows(rows)
-      @row_objects = Array(rows).map { |r| Row.new(r) }
-      add_nil_values
+    def add_rows(raw_rows)
+      max_row_size    = max_row(raw_rows)
+      padded_raw_rows = pad_rows(raw_rows, max_row_size)
+
+      Array(padded_raw_rows).each { |e| rows << Row.new(e) }
     end
     alias_method :<<, :add_rows
 
-    def add_nil_values
-      row_objects.each do |ro|
-        (max_row - ro.row.size).times { ro.row << nil }
-      end
+    def pad_rows(raw_rows, max_size)
+      raw_rows.map{ |r| r.pad_end_with_nil(max_size) }
     end
 
-    def max_row
-      rows.map(&:size).max
+    def columns
+      @columns.tap do |cols|
+        rows.map { |r| r.values }.transpose.each { |c| cols << Column.new(c) }
+      end
     end
 
     def row(i)
       rows[i]
     end
 
-    def rows
-      row_objects.map { |ro| ro.row }
-    end
-
-    def number_of_rows
-      @row_objects.size
+    def column(i)
+      columns[i]
     end
 
     def separator
