@@ -1,13 +1,15 @@
 module Tablez
   class Row
     attr_reader :values
+    attr_reader :padding
 
-    def initialize(values)
-      @values = values
+    def initialize(values, padding)
+      @values  = values
+      @padding = padding
     end
 
     def cells
-      values.map { |v| Cell.new(v) }
+      values.map { |v| Cell.new(v, padding) }
     end
 
     def render(table)

@@ -2,9 +2,11 @@ module Tablez
   ::Array.send(:include, CoreExt::Array::PadEndWithNil)
   class Table
     attr_accessor :rows
+    attr_reader   :padding
 
-    def initialize
-      @rows = []
+    def initialize(options = {})
+      @rows    = []
+      @padding = options[:padding] || 1
     end
 
     def max_row(raw_rows)
@@ -19,7 +21,7 @@ module Tablez
       max_row_size    = max_row(raw_rows)
       padded_raw_rows = pad_rows(raw_rows, max_row_size)
 
-      Array(padded_raw_rows).each { |e| rows << Row.new(e) }
+      Array(padded_raw_rows).each { |r| rows << Row.new(r, padding) }
     end
     alias_method :<<, :add_rows
 
@@ -29,7 +31,7 @@ module Tablez
 
     def columns
       [].tap do |cols|
-        rows.map { |r| r.values }.transpose.each { |c| cols << Column.new(c) }
+        rows.map { |r| r.values }.transpose.each { |c| cols << Column.new(c, padding) }
       end
     end
 

@@ -2,9 +2,9 @@ module Tablez
   class Column
     attr_reader :values
 
-    def initialize(values)
+    def initialize(values, padding)
       @values = values
-      @x_padding = 1
+      @x_padding = padding
     end
 
     def padding

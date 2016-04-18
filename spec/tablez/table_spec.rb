@@ -135,6 +135,18 @@ RSpec.describe Tablez::Table do
       table << [[1, 2, 3], [4, 5, 6]]
       expect(table.separator).to eq("+---+---+---+\n")
     end
+
+    it "can render padding of 2 separator with 2x2" do
+      table = Tablez::Table.new(padding: 2)
+      table << [[1, 2], [3, 4]]
+      expect(table.separator).to eq("+-----+-----+\n")
+    end
+
+    it "can render padding of 2 separator with 3x2" do
+      table = Tablez::Table.new(padding: 2)
+      table << [[1, 2, 3], [4, 5, 6]]
+      expect(table.separator).to eq("+-----+-----+-----+\n")
+    end
   end
 
   describe "#render" do
@@ -145,6 +157,16 @@ RSpec.describe Tablez::Table do
         +---+
         | 1 |
         +---+
+      EOS
+    end
+
+    it "can render a single element row with integer and padding 2" do
+      table = Tablez::Table.new(padding: 2)
+      table << [[1]]
+      expect(table.render).to eq <<-EOS.deindent
+        +-----+
+        |  1  |
+        +-----+
       EOS
     end
   end
@@ -159,6 +181,16 @@ RSpec.describe Tablez::Table do
     EOS
   end
 
+  it "can render a single element row with string and padding 2" do
+    table = Tablez::Table.new(padding: 2)
+    table << [['foo']]
+    expect(table.render).to eq <<-EOS.deindent
+      +-------+
+      |  foo  |
+      +-------+
+    EOS
+  end
+
   it "can render a single row" do
     table = Tablez::Table.new
     table << [[1, 2, 3, 4, 5]]
@@ -166,6 +198,16 @@ RSpec.describe Tablez::Table do
       +---+---+---+---+---+
       | 1 | 2 | 3 | 4 | 5 |
       +---+---+---+---+---+
+    EOS
+  end
+
+  it "can render a single row with padding 2" do
+    table = Tablez::Table.new(padding: 2)
+    table << [[1, 2, 3, 4, 5]]
+    expect(table.render).to eq <<-EOS.deindent
+      +-----+-----+-----+-----+-----+
+      |  1  |  2  |  3  |  4  |  5  |
+      +-----+-----+-----+-----+-----+
     EOS
   end
 
@@ -179,7 +221,17 @@ RSpec.describe Tablez::Table do
     EOS
   end
 
-  it "can adjust to keep the correct padding" do
+  it "can render one row of different size digits with padding 2" do
+    table = Tablez::Table.new(padding: 2)
+    table << [[9, 101, 5, 12, 3]]
+    expect(table.render).to eq <<-EOS.deindent
+      +-----+-------+-----+------+-----+
+      |  9  |  101  |  5  |  12  |  3  |
+      +-----+-------+-----+------+-----+
+    EOS
+  end
+
+  it "can adjust to keep the correct alignment" do
     table = Tablez::Table.new
     table << [[1, 2, 3, 4, 5], [66, 7, 888, 9, 10]]
     expect(table.render).to eq <<-EOS.deindent
@@ -188,6 +240,18 @@ RSpec.describe Tablez::Table do
     +----+---+-----+---+----+
     | 66 | 7 | 888 | 9 | 10 |
     +----+---+-----+---+----+
+    EOS
+  end
+
+  it "can adjust to keep the correct alignment with padding set to 2" do
+    table = Tablez::Table.new(padding: 2)
+    table << [[1, 2, 3, 4, 5], [66, 7, 888, 9, 10]]
+    expect(table.render).to eq <<-EOS.deindent
+    +------+-----+-------+-----+------+
+    |  1   |  2  |  3    |  4  |  5   |
+    +------+-----+-------+-----+------+
+    |  66  |  7  |  888  |  9  |  10  |
+    +------+-----+-------+-----+------+
     EOS
   end
 
@@ -200,6 +264,18 @@ RSpec.describe Tablez::Table do
       +---+---+---+---+---+
       | 1 | 2 |   |   |   |
       +---+---+---+---+---+
+    EOS
+  end
+
+  it "can render jagged arrays with the same size columns and padding set to 2" do
+    table = Tablez::Table.new(padding: 2)
+    table << [[1, 2, 3, 4, 5], [1, 2]]
+    expect(table.render).to eq <<-EOS.deindent
+      +-----+-----+-----+-----+-----+
+      |  1  |  2  |  3  |  4  |  5  |
+      +-----+-----+-----+-----+-----+
+      |  1  |  2  |     |     |     |
+      +-----+-----+-----+-----+-----+
     EOS
   end
 
@@ -217,6 +293,20 @@ RSpec.describe Tablez::Table do
     EOS
   end
 
+  it "can render jagged arrays with more than two rows and padding 2" do
+    table = Tablez::Table.new(padding: 2)
+    table << [[1, 2, 3, 4, 5], [1, 2], [5, 5, 5, 6]]
+    expect(table.render).to eq <<-EOS.deindent
+      +-----+-----+-----+-----+-----+
+      |  1  |  2  |  3  |  4  |  5  |
+      +-----+-----+-----+-----+-----+
+      |  1  |  2  |     |     |     |
+      +-----+-----+-----+-----+-----+
+      |  5  |  5  |  5  |  6  |     |
+      +-----+-----+-----+-----+-----+
+    EOS
+  end
+
   it "can render jagged arrays with different size columns" do
     table = Tablez::Table.new
     table << [[1, 2, 3, 444, 5], [66, 7, 888]]
@@ -229,6 +319,18 @@ RSpec.describe Tablez::Table do
     EOS
   end
 
+  it "can render jagged arrays with different size columns with padding 2" do
+    table = Tablez::Table.new(padding: 2)
+    table << [[1, 2, 3, 444, 5], [66, 7, 888]]
+    expect(table.render).to eq <<-EOS.deindent
+      +------+-----+-------+-------+-----+
+      |  1   |  2  |  3    |  444  |  5  |
+      +------+-----+-------+-------+-----+
+      |  66  |  7  |  888  |       |     |
+      +------+-----+-------+-------+-----+
+    EOS
+  end
+
   it "can properly render a cell missing a value" do
     table = Tablez::Table.new
     table << [[1, 2, 3, 444, 5], [66, 7, 888,'',11]]
@@ -238,6 +340,18 @@ RSpec.describe Tablez::Table do
       +----+---+-----+-----+----+
       | 66 | 7 | 888 |     | 11 |
       +----+---+-----+-----+----+
+    EOS
+  end
+
+  it "can properly render a cell missing a value with padding 2" do
+    table = Tablez::Table.new(padding: 2)
+    table << [[1, 2, 3, 444, 5], [66, 7, 888,'',11]]
+    expect(table.render).to eq <<-EOS.deindent
+      +------+-----+-------+-------+------+
+      |  1   |  2  |  3    |  444  |  5   |
+      +------+-----+-------+-------+------+
+      |  66  |  7  |  888  |       |  11  |
+      +------+-----+-------+-------+------+
     EOS
   end
 end
