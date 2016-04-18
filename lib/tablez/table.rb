@@ -2,7 +2,7 @@ module Tablez
   ::Array.send(:include, CoreExt::Array::PadEndWithNil)
   class Table
     attr_accessor :rows
-    attr_reader   :padding
+    attr_reader :padding
 
     def initialize(options = {})
       @rows    = []
@@ -18,20 +18,20 @@ module Tablez
     end
 
     def add_rows(raw_rows)
-      max_row_size    = max_row(raw_rows)
-      padded_raw_rows = pad_rows(raw_rows, max_row_size)
-
+      padded_raw_rows = pad_rows(raw_rows, max_row(raw_rows))
       Array(padded_raw_rows).each { |r| rows << Row.new(r, padding) }
     end
     alias_method :<<, :add_rows
 
     def pad_rows(raw_rows, max_size)
-      raw_rows.map{ |r| r.pad_end_with_nil(max_size) }
+      raw_rows.map { |r| r.pad_end_with_nil(max_size) }
     end
 
     def columns
       [].tap do |cols|
-        rows.map { |r| r.values }.transpose.each { |c| cols << Column.new(c, padding) }
+        rows.map(&:values).transpose.each do |c|
+          cols << Column.new(c, padding)
+        end
       end
     end
 
@@ -40,22 +40,19 @@ module Tablez
     end
 
     def separator
-      Separator.new(self).render
-    end
-
-    def table_bottom
-      Separator.new(self).bottom
+      Separator.new(self)
     end
 
     def render
-      table = ""
-      table << separator
-      rows.each_with_index do |r, i|
-        table << "|"
-        table << r.render(self)
-        table << separator unless i == rows.size - 1
+      ''.tap do |table|
+        table << separator.render
+        rows.each_with_index do |r, i|
+          table << '|'
+          table << r.render(self)
+          table << separator.render unless i == rows.size - 1
+        end
+        table << separator.bottom
       end
-      table << table_bottom
     end
   end
 end

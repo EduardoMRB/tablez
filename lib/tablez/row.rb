@@ -13,9 +13,10 @@ module Tablez
     end
 
     def render(table)
-      row = ""
-      row << cells.map.with_index { |c, i| c.render(table.column(i).width) }.join("|")
-      row << "|\n"
+      ''.tap do |row|
+        row << cells.map.with_index { |c, i| c.render(table.column(i).width) }.join("|")
+        row << "|\n"
+      end
     end
   end
 end

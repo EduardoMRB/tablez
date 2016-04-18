@@ -1,6 +1,6 @@
-require "tablez/core_ext/array/pad_end_with_nil"
-require "tablez/table"
-require "tablez/row"
-require "tablez/column"
-require "tablez/cell"
-require "tablez/separator"
+require 'tablez/core_ext/array/pad_end_with_nil'
+require 'tablez/table'
+require 'tablez/row'
+require 'tablez/column'
+require 'tablez/cell'
+require 'tablez/separator'

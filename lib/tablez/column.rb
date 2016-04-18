@@ -1,14 +1,15 @@
 module Tablez
   class Column
     attr_reader :values
+    attr_reader :padding
 
     def initialize(values, padding)
-      @values = values
-      @x_padding = padding
+      @values  = values
+      @padding = padding
     end
 
-    def padding
-      @x_padding * 2
+    def total_padding_size
+      padding * 2
     end
 
     def width
@@ -16,7 +17,7 @@ module Tablez
     end
 
     def width_plus_padding
-      width + padding
+      width + total_padding_size
     end
   end
 end

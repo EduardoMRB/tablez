@@ -1,35 +1,30 @@
 module Tablez
   class Separator
     attr_reader :table
-    attr_accessor :x_bars
 
     def initialize(table)
-      @table  = table
-      @x_bars = []
+      @table = table
     end
 
-    def left_corner
-      "+"
-    end
+    def corner_minus_line_break; '+' end
+    def corner_plus_line_break; "+\n" end
 
-    def right_corner
-      "+\n"
+    def render_separator
+      [].tap do |hyphens|
+        table.columns.each do |column|
+          hyphens << "-" * (column.width_plus_padding)
+        end
+      end
     end
 
     def bottom
-      x_bars = []
-      table.columns.each do |column|
-        x_bars << "-" * (column.width_plus_padding)
-      end
-      left_corner + x_bars.join("+") + left_corner
+      separator = render_separator
+      corner_minus_line_break + separator.join("+") + corner_minus_line_break
     end
 
     def render
-      x_bars = []
-      table.columns.each do |column|
-        x_bars << "-" * (column.width_plus_padding)
-      end
-      left_corner + x_bars.join("+") + right_corner
+      separator = render_separator
+      corner_minus_line_break + separator.join("+") + corner_plus_line_break
     end
   end
 end
