@@ -17,15 +17,15 @@ module Tablez
     end
 
     def bottom
-      padding = 1
-      total_padding = padding * 2
-      (table.number_of_columns).times do |i|
-        x_bars << "-" * (table.column_width(i) + total_padding)
+      x_bars = []
+      table.columns.each do |column|
+        x_bars << "-" * (column.width_plus_padding)
       end
       left_corner + x_bars.join("+") + left_corner
     end
 
     def render
+      x_bars = []
       table.columns.each do |column|
         x_bars << "-" * (column.width_plus_padding)
       end

@@ -4,8 +4,7 @@ module Tablez
     attr_accessor :rows
 
     def initialize
-      @rows    = []
-      @columns = []
+      @rows = []
     end
 
     def max_row(raw_rows)
@@ -29,13 +28,9 @@ module Tablez
     end
 
     def columns
-      @columns.tap do |cols|
+      [].tap do |cols|
         rows.map { |r| r.values }.transpose.each { |c| cols << Column.new(c) }
       end
-    end
-
-    def row(i)
-      rows[i]
     end
 
     def column(i)
@@ -51,14 +46,14 @@ module Tablez
     end
 
     def render
-      separator +
-      "".tap do |table|
-        row_objects.each_with_index do |row, i|
-          table << row.render
-          table << separator unless i == row_objects.size - 1
-        end
-      end +
-      table_bottom
+      table = ""
+      table << separator
+      rows.each_with_index do |r, i|
+        table << "|"
+        table << r.render(self)
+        table << separator unless i == rows.size - 1
+      end
+      table << table_bottom
     end
   end
 end
