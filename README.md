@@ -1,8 +1,6 @@
 # Tablez
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/tablez`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+This was inspired by the [Terminal-Table](https://github.com/tj/terminal-table) project. I'm trying to keep a similar API, but there isn't complete feature parity yet.
 
 ## Installation
 
@@ -22,17 +20,57 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+A table instance takes a 2 dimensional array for the rows.
+
+```ruby
+table = Tablez::Table.new
+table << [[1, 2, 3], [4, 5, 6]]
+puts table.render
+
++---+---+---+
+| 1 | 2 | 3 |
++---+---+---+
+| 4 | 5 | 6 |
++---+---+---+
+```
+Tablez handles jagged arrays by padding smaller rows with empty values. Left hand 
+alignment will be followed for columns that have different length values.
+
+```ruby
+table = Tablez::Table.new
+table << [[1, 2, 3, 444, 5], [66, 7, 888]]
+puts table.render
+
++----+---+-----+-----+---+
+| 1  | 2 | 3   | 444 | 5 |
++----+---+-----+-----+---+
+| 66 | 7 | 888 |     |   |
++----+---+-----+-----+---+
+```
+
+### Padding
+
+A table instance can take a padding option which will pad the whole table on the x-axis.
+
+```ruby
+table = Tablez::Table.new(padding: 2)
+table << [[1, 2, 3], [4, 5, 6]]
+puts table.render
+
++-----+-----+-----+
+|  1  |  2  |  3  |
++-----+-----+-----+
+|  4  |  5  |  6  |
++-----+-----+-----+
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+`$ rake` to run the tests
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/tablez.
+Bug reports and pull requests are welcome on GitHub at https://github.com/nikkypx/tablez.
 
 
 ## License
