@@ -48,6 +48,19 @@ puts table.render
 +----+---+-----+-----+---+
 ```
 
+You can add a blank with `''`
+
+```ruby
+table = Tablez::Table.new
+table << [['foo', 'bar baz what'], ['', 'yep a blank']]
+
++-----+--------------+
+| foo | bar baz what |
++-----+--------------+
+|     | yep a blank  |
++-----+--------------+
+```
+
 ### Padding
 
 A table instance can take a padding option which will pad the whole table on the x-axis.
